@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>フライト検索</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px 0 10px;
+            width: 100%;
+            max-width: 300px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .flight {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>フライト検索</h1>
+    <form id="flight-search-form">
+        <label for="origin">出発地コード（例: NRT）:</label>
+        <input type="text" id="origin" required>
+        
+        <label for="destination">目的地コード（例: JFK）:</label>
+        <input type="text" id="destination" required>
+        
+        <label for="departure-date">出発日（例: 2025-03-25）:</label>
+        <input type="date" id="departure-date" required>
+        
+        <button type="submit">検索</button>
+    </form>
+    <div id="results"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
