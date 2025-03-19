@@ -64,6 +64,14 @@
             resultsDiv.innerHTML = '検索中...';
 
             fetch(`https://freewebapi.com/api/flight?origin=${origin}&destination=${destination}&departure_date=${departureDate}`)
+                .then(response => {
+                    if (response.status === 301) {
+                        const redirectUrl = response.headers.get('Location');
+                        return fetch(redirectUrl);
+                    } else {
+                        return response;
+                    }
+                })
                 .then(response => response.json())
                 .then(data => {
                     resultsDiv.innerHTML = '';
