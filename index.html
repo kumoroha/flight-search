@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>フライト検索</title>
+    <title>空港フライト検索</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -37,16 +37,10 @@
     </style>
 </head>
 <body>
-    <h1>フライト検索</h1>
+    <h1>空港フライト検索</h1>
     <form id="flight-search-form">
-        <label for="origin">出発地コード（例: NRT）:</label>
-        <input type="text" id="origin" required>
-        
-        <label for="destination">目的地コード（例: JFK）:</label>
-        <input type="text" id="destination" required>
-        
-        <label for="departure-date">出発日（例: 2025-03-25）:</label>
-        <input type="date" id="departure-date" required>
+        <label for="airport">空港コード（例: NRT）:</label>
+        <input type="text" id="airport" required>
         
         <button type="submit">検索</button>
     </form>
@@ -56,39 +50,35 @@
         document.getElementById('flight-search-form').addEventListener('submit', function(event) {
             event.preventDefault();
             
-            const origin = document.getElementById('origin').value;
-            const destination = document.getElementById('destination').value;
-            const departureDate = document.getElementById('departure-date').value;
+            const airport = document.getElementById('airport').value;
             const resultsDiv = document.getElementById('results');
 
             resultsDiv.innerHTML = '検索中...';
 
-            const script = document.createElement('script');
-            const callbackName = 'flightCallback';
-
-            window[callbackName] = function(data) {
-                resultsDiv.innerHTML = '';
-                if (data.flights && data.flights.length > 0) {
-                    data.flights.forEach(flight => {
-                        const flightDiv = document.createElement('div');
-                        flightDiv.className = 'flight';
-                        flightDiv.innerHTML = `
-                            <p><strong>航空会社:</strong> ${flight.airline}</p>
-                            <p><strong>便名:</strong> ${flight.flight_number}</p>
-                            <p><strong>出発時刻:</strong> ${flight.departure_time}</p>
-                            <p><strong>到着時刻:</strong> ${flight.arrival_time}</p>
-                        `;
-                        resultsDiv.appendChild(flightDiv);
-                    });
-                } else {
-                    resultsDiv.innerHTML = '便が見つかりませんでした。';
-                }
-                document.head.removeChild(script);
-                delete window[callbackName];
-            };
-
-            script.src = `https://freewebapi.com/api/flight?origin=${origin}&destination=${destination}&departure_date=${departureDate}&callback=${callbackName}`;
-            document.head.appendChild(script);
+            fetch(`https://opensky-network.org/api/flights/departure?airport=${airport}`)
+                .then(response => response.json())
+                .then(data => {
+                    resultsDiv.innerHTML = '';
+                    if (data.length > 0) {
+                        data.forEach(flight => {
+                            const flightDiv = document.createElement('div');
+                            flightDiv.className = 'flight';
+                            flightDiv.innerHTML = `
+                                <p><strong>航空会社:</strong> ${flight.callsign}</p>
+                                <p><strong>便名:</strong> ${flight.icao24}</p>
+                                <p><strong>出発時刻:</strong> ${new Date(flight.firstSeen * 1000).toLocaleString()}</p>
+                                <p><strong>到着地:</strong> ${flight.estArrivalAirport}</p>
+                            `;
+                            resultsDiv.appendChild(flightDiv);
+                        });
+                    } else {
+                        resultsDiv.innerHTML = '便が見つかりませんでした。';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching flight data:', error);
+                    resultsDiv.innerHTML = 'エラーが発生しました。もう一度お試しください。';
+                });
         });
     </script>
 </body>
