@@ -13,7 +13,7 @@
             display: block;
             margin: 10px 0 5px;
         }
-        input, button {
+        select, button {
             padding: 10px;
             margin: 5px 0 10px;
             width: 100%;
@@ -39,8 +39,16 @@
 <body>
     <h1>空港フライト検索</h1>
     <form id="flight-search-form">
-        <label for="airport">空港コード（例: NRT）:</label>
-        <input type="text" id="airport" required>
+        <label for="airport">空港コードを選択:</label>
+        <select id="airport" required>
+            <option value="ITM">大阪伊丹空港 (ITM/RJOO)</option>
+        </select>
+
+        <label for="type">種類を選択:</label>
+        <select id="type" required>
+            <option value="departure">出発</option>
+            <option value="arrival">到着</option>
+        </select>
         
         <button type="submit">検索</button>
     </form>
@@ -51,11 +59,14 @@
             event.preventDefault();
             
             const airport = document.getElementById('airport').value;
+            const type = document.getElementById('type').value;
             const resultsDiv = document.getElementById('results');
 
             resultsDiv.innerHTML = '検索中...';
 
-            fetch(`https://opensky-network.org/api/flights/departure?airport=${airport}`)
+            const endpoint = `https://opensky-network.org/api/flights/${type}?airport=${airport}`;
+
+            fetch(endpoint)
                 .then(response => response.json())
                 .then(data => {
                     resultsDiv.innerHTML = '';
@@ -66,8 +77,8 @@
                             flightDiv.innerHTML = `
                                 <p><strong>航空会社:</strong> ${flight.callsign}</p>
                                 <p><strong>便名:</strong> ${flight.icao24}</p>
-                                <p><strong>出発時刻:</strong> ${new Date(flight.firstSeen * 1000).toLocaleString()}</p>
-                                <p><strong>到着地:</strong> ${flight.estArrivalAirport}</p>
+                                <p><strong>${type === 'departure' ? '出発時刻' : '到着時刻'}:</strong> ${new Date(flight.firstSeen * 1000).toLocaleString()}</p>
+                                <p><strong>${type === 'departure' ? '到着地' : '出発地'}:</strong> ${type === 'departure' ? flight.estArrivalAirport : flight.estDepartureAirport}</p>
                             `;
                             resultsDiv.appendChild(flightDiv);
                         });
