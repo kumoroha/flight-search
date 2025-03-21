@@ -12,10 +12,12 @@
         .form-group {
             display: flex;
             flex-wrap: wrap;
+            justify-content: space-between;
         }
         .form-group > div {
-            flex: 1 1 45%;
+            flex: 1 1 30%;
             margin: 5px;
+            box-sizing: border-box;
         }
         label {
             display: block;
@@ -25,7 +27,7 @@
             padding: 10px;
             margin: 5px 0 10px;
             width: 100%;
-            max-width: 300px;
+            box-sizing: border-box;
         }
         button {
             background-color: #4CAF50;
@@ -72,20 +74,18 @@
                     <option value="arrival">到着</option>
                 </select>
             </div>
-        </div>
-        <div class="form-group">
             <div>
                 <label for="airline">航空会社を選択:</label>
                 <select id="airline">
                     <option value="">すべて</option>
                 </select>
             </div>
+        </div>
+        <div class="form-group">
             <div>
                 <label for="destination">目的地を入力:</label>
                 <input type="text" id="destination" placeholder="例: HND, FUK">
             </div>
-        </div>
-        <div class="form-group">
             <div>
                 <label for="time">時間を入力 (例: 14:00):</label>
                 <input type="time" id="time">
@@ -141,7 +141,7 @@
                 const matchesAirline = airline ? flight.airline === airline : true;
                 const matchesDestination = destination ? (type === 'departure' ? flight.arrival_airport === destination : flight.departure_airport === destination) : true;
                 const matchesTime = time ? (type === 'departure' ? flight.departure_time >= time : flight.arrival_time >= time) : true;
-                return matchesType && matchesAirline && matchesDestination && matchesTime;
+                return matchesType && (!airline || matchesAirline) && (!destination || matchesDestination) && (!time || matchesTime);
             });
 
             resultsDiv.innerHTML = '';
