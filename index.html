@@ -141,7 +141,7 @@
                 const matchesAirline = airline ? flight.airline === airline : true;
                 const matchesDestination = destination ? (type === 'departure' ? flight.arrival_airport === destination : flight.departure_airport === destination) : true;
                 const matchesTime = time ? (type === 'departure' ? flight.departure_time >= time : flight.arrival_time >= time) : true;
-                return matchesType && (!airline || matchesAirline) && (!destination || matchesDestination) && (!time || matchesTime);
+                return matchesType && matchesAirline && matchesDestination && matchesTime;
             });
 
             resultsDiv.innerHTML = '';
