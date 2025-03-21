@@ -9,6 +9,14 @@
             font-family: Arial, sans-serif;
             margin: 20px;
         }
+        .form-group {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .form-group > div {
+            flex: 1 1 45%;
+            margin: 5px;
+        }
         label {
             display: block;
             margin: 10px 0 5px;
@@ -50,28 +58,39 @@
 <body>
     <h1>便情報検索</h1>
     <form id="flight-search-form">
-        <label for="airport">空港コードを選択:</label>
-        <select id="airport" required>
-            <option value="ITM/RJOO">大阪伊丹空港 (ITM/RJOO)</option>
-        </select>
-
-        <label for="type">種類を選択:</label>
-        <select id="type" required>
-            <option value="departure">出発</option>
-            <option value="arrival">到着</option>
-        </select>
-
-        <label for="airline">航空会社を選択:</label>
-        <select id="airline">
-            <option value="">すべて</option>
-        </select>
-
-        <label for="destination">目的地を入力:</label>
-        <input type="text" id="destination" placeholder="例: HND, FUK">
-        
-        <label for="time">時間を入力 (例: 14:00):</label>
-        <input type="time" id="time">
-        
+        <div class="form-group">
+            <div>
+                <label for="airport">空港コードを選択:</label>
+                <select id="airport" required>
+                    <option value="ITM/RJOO">大阪伊丹空港 (ITM/RJOO)</option>
+                </select>
+            </div>
+            <div>
+                <label for="type">種類を選択:</label>
+                <select id="type" required>
+                    <option value="departure">出発</option>
+                    <option value="arrival">到着</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div>
+                <label for="airline">航空会社を選択:</label>
+                <select id="airline">
+                    <option value="">すべて</option>
+                </select>
+            </div>
+            <div>
+                <label for="destination">目的地を入力:</label>
+                <input type="text" id="destination" placeholder="例: HND, FUK">
+            </div>
+        </div>
+        <div class="form-group">
+            <div>
+                <label for="time">時間を入力 (例: 14:00):</label>
+                <input type="time" id="time">
+            </div>
+        </div>
         <button type="submit">検索</button>
     </form>
     <div id="results"></div>
@@ -122,7 +141,7 @@
                 const matchesAirline = airline ? flight.airline === airline : true;
                 const matchesDestination = destination ? (type === 'departure' ? flight.arrival_airport === destination : flight.departure_airport === destination) : true;
                 const matchesTime = time ? (type === 'departure' ? flight.departure_time >= time : flight.arrival_time >= time) : true;
-                return matchesType && matchesAirline && matchesDestination && matchesTime;
+                return matchesType && (!airline || matchesAirline) && (!destination || matchesDestination) && (!time || matchesTime);
             });
 
             resultsDiv.innerHTML = '';
