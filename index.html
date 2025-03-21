@@ -79,7 +79,6 @@
     <script>
         let flightsData = [];
 
-        // CSVデータを取得して解析する
         async function fetchCSV() {
             const response = await fetch('https://raw.githubusercontent.com/kumoroha/flight-search/main/RJOOdia.csv');
             const csvText = await response.text();
@@ -106,7 +105,6 @@
 
         document.addEventListener('DOMContentLoaded', fetchCSV);
 
-        // フォームの送信イベントを監視
         document.getElementById('flight-search-form').addEventListener('submit', function(event) {
             event.preventDefault();
             
@@ -124,7 +122,7 @@
                 const matchesAirline = airline ? flight.airline === airline : true;
                 const matchesDestination = destination ? (type === 'departure' ? flight.arrival_airport === destination : flight.departure_airport === destination) : true;
                 const matchesTime = time ? (type === 'departure' ? flight.departure_time >= time : flight.arrival_time >= time) : true;
-                return matchesType && (!airline || matchesAirline) && (!destination || matchesDestination) && (!time || matchesTime);
+                return matchesType && matchesAirline && matchesDestination && matchesTime;
             });
 
             resultsDiv.innerHTML = '';
